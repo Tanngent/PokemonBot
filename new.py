@@ -1,5 +1,6 @@
 import asyncio
 import websockets
+import requests
 
 async def hello():
     uri = "ws://sim.smogon.com:8000/showdown/websocket"
