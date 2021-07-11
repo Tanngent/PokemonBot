@@ -21,15 +21,24 @@ async def inp(queue, websocket):
 	await queue.put(l)
 	while True:
 		greeting = await websocket.recv()
-		print(f"< {greeting}")
+		if greeting.startswith("|updatesearch|"):
+			s = json.loads(greeting[14:])
+			if s['games']:
+				asyncio.gather(asyncio.create_task(battle(queue,list(s['games'].keys())[0])))
+		print(f"<<< {greeting}")
 			
 async def out(queue, websocket):
 	while True:
 		token = await queue.get()
 		await websocket.send(token)
-		print(f"> {token}")
+		print(f">>> {token}")
 		queue.task_done()
-	
+		
+async def battle(queue, str):
+	while True:
+		await asyncio.sleep(5)
+		await queue.put(f"{str}|/choose move 1,move 1")
+
 async def main():
 	queue = asyncio.Queue()
 	uri = "ws://sim.smogon.com:8000/showdown/websocket"
