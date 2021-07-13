@@ -6,10 +6,10 @@ import json
 async def inp(queue, websocket):
 	url = "https://play.pokemonshowdown.com/~~showdown/action.php"
 	greeting = await websocket.recv();
-	print(f"< {greeting}")
+	print(f"<<< {greeting}")
 	while not greeting.startswith("|challstr|"):
 		greeting = await websocket.recv();
-		print(f"< {greeting}")
+		print(f"<<< {greeting}")
 	f = open("user.txt","r")
 	usname = f.readline()
 	passwd = f.readline()
