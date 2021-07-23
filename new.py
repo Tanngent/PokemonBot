@@ -5,10 +5,10 @@ import json
 
 async def inp(queue, websocket):
 	url = "https://play.pokemonshowdown.com/~~showdown/action.php"
-	greeting = await websocket.recv();
+	greeting = await websocket.recv()
 	print(f"<<< {greeting}")
 	while not greeting.startswith("|challstr|"):
-		greeting = await websocket.recv();
+		greeting = await websocket.recv()
 		print(f"<<< {greeting}")
 	f = open("user.txt","r")
 	usname = f.readline()
@@ -25,6 +25,11 @@ async def inp(queue, websocket):
 			s = json.loads(greeting[14:])
 			if s['games']:
 				asyncio.gather(asyncio.create_task(battle(queue,list(s['games'].keys())[0])))
+		elif greeting.startswith("|pm|"):
+			bits = greeting.split("|")
+			other = bits[2].strip()
+			print(bits)
+			print(other)
 		print(f"<<< {greeting}")
 			
 async def out(queue, websocket):
@@ -34,10 +39,10 @@ async def out(queue, websocket):
 		print(f">>> {token}")
 		queue.task_done()
 		
-async def battle(queue, str):
+async def battle(queuein, queueout, str):
 	while True:
 		await asyncio.sleep(5)
-		await queue.put(f"{str}|/choose move 1,move 1")
+		await queueout.put(f"{str}|/choose move 1,move 1")
 
 async def main():
 	queue = asyncio.Queue()
