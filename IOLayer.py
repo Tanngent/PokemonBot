@@ -6,10 +6,10 @@ import json
 async def inp(queue, websocket):
 	url = "https://play.pokemonshowdown.com/~~showdown/action.php"
 	greeting = await websocket.recv()
-	print(f"<<< {greeting}")
+	#print(f"<<< {greeting}")
 	while not greeting.startswith("|challstr|"):
 		greeting = await websocket.recv()
-		print(f"<<< {greeting}")
+		#print(f"<<< {greeting}")
 	f = open("user.txt","r")
 	usname = f.readline()
 	passwd = f.readline()
@@ -22,7 +22,7 @@ async def inp(queue, websocket):
 	games = {}
 	while True:
 		greeting = await websocket.recv()
-		print(f"<<< {greeting}")
+		#print(f"<<< {greeting}")
 		if greeting.startswith("|updatesearch|"):
 			s = json.loads(greeting[14:])
 			localgames = list(games)
@@ -45,15 +45,20 @@ async def inp(queue, websocket):
 			other = bits[2].strip()
 			if bits[4].startswith("/challenge"):
 				await queue.put(f"|/accept {other}")
+		elif greeting.startswith(">battle"):
+			gamename = greeting.partition('\n')[0][1:]
+			if gamename in games:
+				await games[gamename].put(greeting)
+			else:
+				print(f"Battle with name {gamename} does not exist or has already ended\n")
 
-			
 async def out(queue, websocket):
 	while True:
 		token = await queue.get()
 		await websocket.send(token)
-		print(f">>> {token}")
+		#print(f">>> {token}")
 		queue.task_done()
-		
+
 async def battle(queuein, queueout, str):
 	while True:
 		if queuein.empty():
@@ -63,6 +68,8 @@ async def battle(queuein, queueout, str):
 			token = await queuein.get()
 			if token == "end":
 				return
+			else:
+				print(f"<<< {token}")
 
 async def main():
 	queue = asyncio.Queue()
