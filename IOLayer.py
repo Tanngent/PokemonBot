@@ -3,6 +3,8 @@ import websockets
 import requests
 import json
 
+from Battle import Battle
+
 async def inp(queue, websocket):
 	url = "https://play.pokemonshowdown.com/~~showdown/action.php"
 	greeting = await websocket.recv()
@@ -22,7 +24,7 @@ async def inp(queue, websocket):
 	games = {}
 	while True:
 		greeting = await websocket.recv()
-		#print(f"<<< {greeting}")
+		print(f"<<< {greeting}")
 		if greeting.startswith("|updatesearch|"):
 			s = json.loads(greeting[14:])
 			localgames = list(games)
@@ -37,9 +39,11 @@ async def inp(queue, websocket):
 				battlequeue = asyncio.Queue()
 				asyncio.gather(asyncio.create_task(battle(battlequeue,queue,game)))
 				games[game] = battlequeue
+				await queue.put(f"|/join {game}")
 			for game in endedgames:
 				await games.get(game).put("end")
 				games.pop(game,None)
+				await queue.put(f"|/leave {game}")
 		elif greeting.startswith("|pm|"):
 			bits = greeting.split("|")
 			other = bits[2].strip()
@@ -56,20 +60,40 @@ async def out(queue, websocket):
 	while True:
 		token = await queue.get()
 		await websocket.send(token)
-		#print(f">>> {token}")
+		print(f">>> {token}")
 		queue.task_done()
 
 async def battle(queuein, queueout, str):
+	print(f"Started {str}")
+	thisBattle = Battle()
+	receivedRequest = False
+	receivedChange = False
 	while True:
 		if queuein.empty():
-			await queueout.put(f"{str}|/choose move 1")
-			await asyncio.sleep(5)
+			#
+			#await queueout.put(f"{str}|/choose move 1")
+			await asyncio.sleep(1)
 		else:
 			token = await queuein.get()
 			if token == "end":
 				return
 			else:
-				print(f"<<< {token}")
+				#print(f"<<< {token}")
+				lines = token.split("\n")[1:]
+				if lines[0].startswith("|request|") and lines[0] != "|request|":
+					#print("receivedRequest")
+					#print(lines[0][9:])
+					teaminfo = json.loads(lines[0][9:])
+					thisBattle.update(teaminfo)
+					print(thisBattle)
+					receivedRequest = True
+				elif lines[0] == "|" or "|start" in lines:
+					#print("receivedChange")
+					receivedChange = True
+				if receivedRequest and receivedChange:
+					await queueout.put(f"{str}|/choose move 1")
+					receivedRequest = False
+					receivedChange = False
 
 async def main():
 	queue = asyncio.Queue()
