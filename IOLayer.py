@@ -37,7 +37,7 @@ async def inp(queue, websocket):
 			endedgames = set(localgames) - set(remotegames)
 			for game in startedgames:
 				battlequeue = asyncio.Queue()
-				asyncio.gather(asyncio.create_task(battle(battlequeue,queue,game)))
+				asyncio.gather(asyncio.create_task(battle(battlequeue,queue,game,usname)))
 				games[game] = battlequeue
 				await queue.put(f'|/join {game}')
 			for game in endedgames:
@@ -63,7 +63,7 @@ async def out(queue, websocket):
 		print(f'>>> {token}')
 		queue.task_done()
 
-async def battle(queuein, queueout, str):
+async def battle(queuein, queueout, str, usname):
 	print(f'Started {str}')
 	thisBattle = Battle()
 	receivedRequest = False
@@ -84,12 +84,13 @@ async def battle(queuein, queueout, str):
 					#print(lines[0][9:])
 					teaminfo = json.loads(lines[0][9:])
 					thisBattle.updateSelf(teaminfo)
-					print(thisBattle)
 					receivedRequest = True
 				elif lines[0] == '|' or '|start' in lines:
 					#print('receivedChange')
+					thisBattle.parseChange(lines, usname.strip())
 					receivedChange = True
 				if receivedRequest and receivedChange:
+					print(thisBattle)
 					await queueout.put(f'{str}|/choose {thisBattle.getMove()}')
 					receivedRequest = False
 					receivedChange = False
