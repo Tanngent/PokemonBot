@@ -75,6 +75,7 @@ async def battle(queuein, queueout, str, usname):
 		else:
 			token = await queuein.get()
 			if token == 'end':
+				thisBattle.endBattle()
 				return
 			else:
 				#print(f'<<< {token}')

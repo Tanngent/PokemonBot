@@ -1,4 +1,5 @@
 import random
+import json
 from Pokemon import Pokemon
 
 class Battle:
@@ -79,7 +80,7 @@ class Battle:
                             self.enemyStatBoost = [0, 0, 0, 0]
                             inInfo = parts[2].split(',')
                             inPokemon = inInfo[0]
-                            inLevel = 100 if len(inInfo)==1 else inInfo[1].translate(str.maketrans('', '', 'L, '))
+                            inLevel = 100 if len(inInfo)==1 else inInfo[1].translate(str.maketrans('', '', 'L '))
                             self.enemyActive = 0
                             for pk in self.enemyTeam:
                                 if pk.specie == inPokemon:
@@ -212,7 +213,14 @@ class Battle:
         else:
             return validMoves[moveChoice]
         
-
+    def endBattle(self):
+        with open('stats.json','r') as readFile:
+            stats = json.load(readFile)
+        for pk in self.ownTeam:
+            if pk.specie not in stats:
+                stats[pk.specie] = [pk.atk, pk.defe, pk.spa, pk.spd, pk.spe]
+        with open('stats.json','w') as writeFile:
+            json.dump(stats, writeFile, indent=4,  sort_keys=True)
 
     def __str__(self):
         return 'Own Id: ' + str(self.ownId) + '\nEnemy Id: ' + str(self.enemyId) + '\n'\

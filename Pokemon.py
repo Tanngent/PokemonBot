@@ -14,8 +14,8 @@ class Pokemon:
     # Update state of party pokemon from JSON
     def update(self,json):
         #print(json)
-        self.specie = json['details'].split(' ')[0].translate(str.maketrans('', '', ', '))
-        self.level = 100 if len(json['details'].split(' ')) == 1 else int(json['details'].split(' ')[1].translate(str.maketrans('', '', 'L, ')))
+        self.specie = json['details'].split(',')[0].translate(str.maketrans('', '', ' '))
+        self.level = 100 if len(json['details'].split(',')) == 1 else int(json['details'].split(',')[1].translate(str.maketrans('', '', 'L ')))
         self.health = 0.0 if json['condition'].split(' ')[0] == '0' else int(json['condition'].split(' ')[0].split('/')[0])/int(json['condition'].split(' ')[0].split('/')[1])
         self.status = '' if len(json['condition'].split(' ')) == 1 else json['condition'].split(' ')[1]
         self.moves[0] = json['moves'][0]
