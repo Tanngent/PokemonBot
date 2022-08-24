@@ -44,6 +44,8 @@ async def inp(queue, websocket):
 				await games.get(game).put('end')
 				games.pop(game,None)
 				await queue.put(f'|/leave {game}')
+			#if len(games) == 0:
+				#await queue.put('|/challenge 0hzlf9ccsl, gen1randombattle')
 		elif greeting.startswith('|pm|'):
 			bits = greeting.split('|')
 			other = bits[2].strip()
