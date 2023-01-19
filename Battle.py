@@ -220,7 +220,7 @@ class Battle:
             if pk.specie not in stats:
                 stats[pk.specie] = [pk.atk, pk.defe, pk.spa, pk.spd, pk.spe]
         with open('stats.json','w') as writeFile:
-            json.dump(stats, writeFile, indent=4,  sort_keys=True)
+            json.dump(stats, writeFile, indent=4, sort_keys=True)
 
     def __str__(self):
         return 'Own Id: ' + str(self.ownId) + '\nEnemy Id: ' + str(self.enemyId) + '\n'\
