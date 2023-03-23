@@ -1,7 +1,7 @@
 class Pokemon:
     def __init__(self):
         self.specie = ''
-        self.level = 0
+        self.level = 100
         self.health = 1.0
         self.status = ''
         self.moves = ['','','','']
@@ -34,6 +34,6 @@ class Pokemon:
         # TODO parse
 
     def __str__(self):
-        return str(self.specie) + ', ' + str(self.level) + ', ' + str(self.health) + ', ' + self.status + ', ' + self.moves[0]\
-            + ', ' + self.moves[1] + ', ' + self.moves[2] + ', ' + self.moves[3] + ', ' + str(self.atk) + ', ' + str(self.defe)\
-                 + ', ' + str(self.spa)  + ', ' + str(self.spd)  + ', ' + str(self.spe)
+        return str(self.specie) + ',' + str(self.level) + ',' + str(self.health) + ',' + self.status + ',' + self.moves[0]\
+            + ',' + self.moves[1] + ',' + self.moves[2] + ',' + self.moves[3] + ',' + str(self.atk) + ',' + str(self.defe)\
+                 + ',' + str(self.spa)  + ',' + str(self.spd)  + ',' + str(self.spe)

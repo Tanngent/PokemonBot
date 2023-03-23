@@ -68,11 +68,14 @@ async def out(queue, websocket): # send websocket message
 		print(f'>>> {token}')
 		queue.task_done()
 
-async def battle(queuein, queueout, str, usname): # battle object for handling messaging
-	print(f'Started {str}')
+async def battle(queuein, queueout, string, usname): # battle function for handling messaging
+	print(f'Started {string}')
 	thisBattle = Battle()
 	receivedRequest = False
 	receivedChange = False
+	savedStates = []
+	savedDecision = []
+	savedHP = []
 	while True:
 		if queuein.empty():
 			# await queueout.put(f'{str}|/choose move 1')
@@ -95,9 +98,27 @@ async def battle(queuein, queueout, str, usname): # battle object for handling m
 					# print('receivedChange')
 					thisBattle.parseChange(lines, usname.strip())
 					receivedChange = True
-				if receivedRequest and receivedChange: # received both, make decision
-					print(thisBattle)
-					await queueout.put(f'{str}|/choose {thisBattle.getMove()}')
+				if receivedRequest and receivedChange: # received both, update previous decision outcome, make decision
+					move = thisBattle.getMove()
+					savedStates.append(thisBattle.getState())
+					savedDecision.append(move)
+					savedHP.append(thisBattle.getHealthDelta())
+					if len(savedStates) > 3:
+						myString = savedStates[0]
+						myString = myString + "," + savedDecision[0]
+						myString = myString + "," +str(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2])) + "\n"
+						print(savedHP[0])
+						print(savedHP[1])
+						print(savedHP[2])
+						print(savedHP[3])
+						print(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2]))
+						myFile = open("train.csv",mode="a")
+						myFile.write(myString)
+						myFile.close()
+						savedStates.pop(0)
+						savedDecision.pop(0)
+						savedHP.pop(0)
+					await queueout.put(f'{string}|/choose {move}')
 					receivedRequest = False
 					receivedChange = False
 

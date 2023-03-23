@@ -231,3 +231,36 @@ class Battle:
                         + '\n' + self.enemyTeam[0].__str__() + '\n' + self.enemyTeam[1].__str__() + '\n' + self.enemyTeam[2].__str__() + '\n' + self.enemyTeam[3].__str__()\
                             + '\n' + self.enemyTeam[4].__str__() + '\n' + self.enemyTeam[5].__str__() + '\nEnemy Active: ' + str(self.enemyActive) + '\nEnemy Transform: ' + str(self.enemyTransform)\
                                 + '\nEnemy Stats: ' + str(self.enemyStatBoost[0]) + ':' + str(self.enemyStatBoost[1]) + ':' + str(self.enemyStatBoost[2]) + ':' + str(self.enemyStatBoost[3])
+
+    def getState(self):
+        val = ""
+        if self.ownTransform == -1:
+            val = val + self.ownTeam[self.ownActive].__str__() + ","
+        else:
+            val = val + self.ownTeam[self.ownTransform].__str__() + ","
+        for i in range(6):
+            if i != self.ownActive:
+                val = val + self.ownTeam[i].__str__() + ","
+        
+        if self.enemyTransform == -1:
+            val = val + self.enemyTeam[self.enemyActive].__str__() + ","
+        else:
+            val = val + self.enemyTeam[self.enemyTransform].__str__() + ","
+        for i in range(6):
+            if i != self.enemyActive:
+                val = val + self.enemyTeam[i].__str__() + ","
+        val = val + str(self.ownStatBoost[0]) + "," + str(self.ownStatBoost[1]) + "," + str(self.ownStatBoost[2]) + "," + str(self.ownStatBoost[3]) + ","
+        val = val + str(self.ownStatBoost[0]) + "," + str(self.ownStatBoost[1]) + "," + str(self.ownStatBoost[2]) + "," + str(self.ownStatBoost[3]) + ","
+        return val
+    
+    def getHealthDelta(self):
+        ownHealth = 0
+        ownAlive = 0
+        enemyHealth = 0
+        enemyAlive = 0
+        for i in range(6):
+            ownHealth += self.ownTeam[i].health
+            ownAlive += 1 if self.ownTeam[i].health > 0 else 0
+            enemyHealth += self.enemyTeam[i].health
+            enemyAlive += 1 if self.enemyTeam[i].health > 0 else 0
+        return ownHealth + ownAlive - enemyHealth - enemyAlive
