@@ -88,6 +88,7 @@ class Battle:
                                 if pk.specie == '':
                                     pk.specie = inPokemon
                                     pk.level = inLevel
+                                    pk.getStats(inPokemon)
                                     break
                                 self.enemyActive += 1
                     case 'move':

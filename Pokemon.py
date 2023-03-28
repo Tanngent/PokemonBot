@@ -1,3 +1,5 @@
+import json as js
+
 class Pokemon:
     def __init__(self):
         self.specie = ''
@@ -29,9 +31,15 @@ class Pokemon:
         self.spe = json['stats']['spe']
 
     # Update state of enemy pokemon from text
-    def parseChange(self,type,value):
-        pass
-        # TODO parse
+    def getStats(self,specie):
+        f = open('stats.json')
+        json = js.load(f)
+        self.atk = json[specie][0]
+        self.defe = json[specie][1]
+        self.spa = json[specie][2]
+        self.spd = json[specie][3]
+        self.spe = json[specie][4]
+        f.close()
 
     def __str__(self):
         return str(self.specie) + ',' + str(self.level) + ',' + str(self.health) + ',' + self.status + ',' + self.moves[0]\

@@ -27,7 +27,7 @@ async def inp(queue, websocket): # accept incoming websocket message
 	games = {}
 	while True:
 		greeting = await websocket.recv()
-		print(f'<<< {greeting}')
+		#print(f'<<< {greeting}')
 		if greeting.startswith('|updatesearch|'): # new game started or game stopped
 			s = json.loads(greeting[14:])
 			localgames = list(games)
@@ -67,6 +67,7 @@ async def out(queue, websocket): # send websocket message
 		await websocket.send(token)
 		print(f'>>> {token}')
 		queue.task_done()
+		await asyncio.sleep(1)
 
 async def battle(queuein, queueout, string, usname): # battle function for handling messaging
 	print(f'Started {string}')
@@ -83,6 +84,28 @@ async def battle(queuein, queueout, string, usname): # battle function for handl
 		else:
 			token = await queuein.get()
 			if token == 'end': # end battle
+				savedHP.append(thisBattle.getHealthDelta())
+				for i in range(len(savedHP)):
+					print(savedHP[i])
+				for i in range(len(savedStates)):
+					hpDiff = 0
+					for j in range(3-i):
+						hpDiff = hpDiff * 0.5
+						hpDiff = hpDiff + savedHP[3-i-j]-savedHP[2-i-j]
+					myString = savedStates[0]
+					myString = myString + "," + savedDecision[0]
+					myString = myString + "," + str(hpDiff) + "\n"
+					#print(savedHP[0])
+					#print(savedHP[1])
+					#print(savedHP[2])
+					#print(savedHP[3])
+					#print(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2]))
+					myFile = open("train.csv",mode="a")
+					myFile.write(myString)
+					myFile.close()
+					savedStates.pop(0)
+					savedDecision.pop(0)
+					savedHP.pop(0)
 				thisBattle.endBattle()
 				return
 			else:
@@ -107,11 +130,11 @@ async def battle(queuein, queueout, string, usname): # battle function for handl
 						myString = savedStates[0]
 						myString = myString + "," + savedDecision[0]
 						myString = myString + "," +str(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2])) + "\n"
-						print(savedHP[0])
-						print(savedHP[1])
-						print(savedHP[2])
-						print(savedHP[3])
-						print(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2]))
+						#print(savedHP[0])
+						#print(savedHP[1])
+						#print(savedHP[2])
+						#print(savedHP[3])
+						#print(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2]))
 						myFile = open("train.csv",mode="a")
 						myFile.write(myString)
 						myFile.close()
