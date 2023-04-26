@@ -52,6 +52,7 @@ class Battle:
             self.trapped = 'trapped' in json['active'][0]
 
     def parseChange(self,change,name):
+        # print(change)
         for line in change:
             parts = line[1:].split('|')
             #print(parts[0])
@@ -63,6 +64,9 @@ class Battle:
             if parts[0] == 'player' and len(parts)>=3 and parts[2] == name:
                 self.ownId = parts[1]
                 self.enemyId = 'p2' if self.ownId == 'p1' else 'p1'
+            if parts[0] == 'player' and len(parts)>=3 and parts[2] != name:
+                self.enemyId = parts[1]
+                self.ownId = 'p2' if self.enemyId == 'p1' else 'p1'
             if parts and parts[0] in self.parsableChanges:
                 #print(line)
                 isOwn = parts[1].startswith(self.ownId)
@@ -264,4 +268,9 @@ class Battle:
             ownAlive += 1 if self.ownTeam[i].health > 0 else 0
             enemyHealth += self.enemyTeam[i].health
             enemyAlive += 1 if self.enemyTeam[i].health > 0 else 0
+        print(ownHealth)
+        print(ownAlive)
+        print(enemyHealth)
+        print(enemyAlive)
+        print(ownHealth + ownAlive - enemyHealth - enemyAlive)
         return ownHealth + ownAlive - enemyHealth - enemyAlive

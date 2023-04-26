@@ -27,7 +27,7 @@ async def inp(queue, websocket): # accept incoming websocket message
 	games = {}
 	while True:
 		greeting = await websocket.recv()
-		#print(f'<<< {greeting}')
+		# print(f'<<< {greeting}')
 		if greeting.startswith('|updatesearch|'): # new game started or game stopped
 			s = json.loads(greeting[14:])
 			localgames = list(games)
@@ -43,12 +43,13 @@ async def inp(queue, websocket): # accept incoming websocket message
 				asyncio.gather(asyncio.create_task(battle(battlequeue,queue,game,usname)))
 				games[game] = battlequeue
 				await queue.put(f'|/join {game}')
-			for game in endedgames: # games taht just ended
+			for game in endedgames: # games that just ended
 				await games.get(game).put('end')
 				games.pop(game,None)
 				await queue.put(f'|/leave {game}')
-			#if len(games) == 0:
-				# await queue.put('|/challenge 0hzlf9ccsl, gen1randombattle')
+			if len(games) == 0:
+				await queue.put('|/challenge Ruang, gen1randombattle')
+				pass
 		elif greeting.startswith('|pm|'): # pm, including challenge request
 			bits = greeting.split('|')
 			other = bits[2].strip()
@@ -86,7 +87,8 @@ async def battle(queuein, queueout, string, usname): # battle function for handl
 			if token == 'end': # end battle
 				savedHP.append(thisBattle.getHealthDelta())
 				for i in range(len(savedHP)):
-					print(savedHP[i])
+					#print(savedHP[i])
+					pass
 				for i in range(len(savedStates)):
 					hpDiff = 0
 					for j in range(3-i):
@@ -122,6 +124,7 @@ async def battle(queuein, queueout, string, usname): # battle function for handl
 					thisBattle.parseChange(lines, usname.strip())
 					receivedChange = True
 				if receivedRequest and receivedChange: # received both, update previous decision outcome, make decision
+					print(thisBattle.__str__())
 					move = thisBattle.getMove()
 					savedStates.append(thisBattle.getState())
 					savedDecision.append(move)
@@ -134,6 +137,7 @@ async def battle(queuein, queueout, string, usname): # battle function for handl
 						#print(savedHP[1])
 						#print(savedHP[2])
 						#print(savedHP[3])
+						#print(len(savedHP))
 						#print(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2]))
 						myFile = open("train.csv",mode="a")
 						myFile.write(myString)
