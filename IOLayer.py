@@ -97,11 +97,6 @@ async def battle(queuein, queueout, string, usname): # battle function for handl
 					myString = savedStates[0]
 					myString = myString + "," + savedDecision[0]
 					myString = myString + "," + str(hpDiff) + "\n"
-					#print(savedHP[0])
-					#print(savedHP[1])
-					#print(savedHP[2])
-					#print(savedHP[3])
-					#print(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2]))
 					myFile = open("train.csv",mode="a")
 					myFile.write(myString)
 					myFile.close()
@@ -133,12 +128,6 @@ async def battle(queuein, queueout, string, usname): # battle function for handl
 						myString = savedStates[0]
 						myString = myString + "," + savedDecision[0]
 						myString = myString + "," +str(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2])) + "\n"
-						#print(savedHP[0])
-						#print(savedHP[1])
-						#print(savedHP[2])
-						#print(savedHP[3])
-						#print(len(savedHP))
-						#print(savedHP[1]-savedHP[0] + 0.5*(savedHP[2]-savedHP[1]) + 0.25*(savedHP[3]-savedHP[2]))
 						myFile = open("train.csv",mode="a")
 						myFile.write(myString)
 						myFile.close()

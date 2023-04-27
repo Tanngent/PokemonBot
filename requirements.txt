@@ -1,3 +1,5 @@
 asyncio
 websockets
 requests
+pandas
+torch
