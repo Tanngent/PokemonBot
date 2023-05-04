@@ -242,7 +242,7 @@ class Battle:
         if self.ownTransform == -1:
             val = val + self.ownTeam[self.ownActive].__str__() + ","
         else:
-            val = val + self.ownTeam[self.ownTransform].__str__() + ","
+            val = val + self.enemyTeam[self.ownTransform].__str__() + ","
         for i in range(6):
             if i != self.ownActive:
                 val = val + self.ownTeam[i].__str__() + ","
@@ -250,12 +250,12 @@ class Battle:
         if self.enemyTransform == -1:
             val = val + self.enemyTeam[self.enemyActive].__str__() + ","
         else:
-            val = val + self.enemyTeam[self.enemyTransform].__str__() + ","
+            val = val + self.ownTeam[self.enemyTransform].__str__() + ","
         for i in range(6):
             if i != self.enemyActive:
                 val = val + self.enemyTeam[i].__str__() + ","
         val = val + str(self.ownStatBoost[0]) + "," + str(self.ownStatBoost[1]) + "," + str(self.ownStatBoost[2]) + "," + str(self.ownStatBoost[3]) + ","
-        val = val + str(self.ownStatBoost[0]) + "," + str(self.ownStatBoost[1]) + "," + str(self.ownStatBoost[2]) + "," + str(self.ownStatBoost[3]) + ","
+        val = val + str(self.ownStatBoost[0]) + "," + str(self.ownStatBoost[1]) + "," + str(self.ownStatBoost[2]) + "," + str(self.ownStatBoost[3])
         return val
     
     def getHealthDelta(self):

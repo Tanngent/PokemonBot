@@ -3,3 +3,5 @@ websockets
 requests
 pandas
 torch
+sklearn
+numpy
